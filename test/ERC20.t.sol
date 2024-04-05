@@ -232,4 +232,242 @@ contract ERC20Test is Test {
             handler.approve(spender, amount);
         }
     }
+
+    function testEq() public pure {
+        assertTrue(ERC20.wrap(address(1)) == ERC20.wrap(address(1)));
+
+        assertFalse(ERC20.wrap(address(1)) == ERC20.wrap(address(2)));
+    }
+
+    function testFuzzEq(ERC20 a, ERC20 b) public pure {
+        if (ERC20.unwrap(a) == ERC20.unwrap(b)) {
+            assertTrue(a == b);
+        } else {
+            assertFalse(a == b);
+        }
+    }
+
+    function testNeq() public pure {
+        assertTrue(ERC20.wrap(address(1)) != ERC20.wrap(address(2)));
+
+        assertFalse(ERC20.wrap(address(1)) != ERC20.wrap(address(1)));
+    }
+
+    function testFuzzNeq(ERC20 a, ERC20 b) public pure {
+        if (ERC20.unwrap(a) != ERC20.unwrap(b)) {
+            assertTrue(a != b);
+        } else {
+            assertFalse(a != b);
+        }
+    }
+
+    function testGt() public pure {
+        assertTrue(ERC20.wrap(address(2)) > ERC20.wrap(address(1)));
+
+        assertFalse(ERC20.wrap(address(1)) > ERC20.wrap(address(2)));
+    }
+
+    function testFuzzGt(ERC20 a, ERC20 b) public pure {
+        if (ERC20.unwrap(a) > ERC20.unwrap(b)) {
+            assertTrue(a > b);
+        } else {
+            assertFalse(a > b);
+        }
+    }
+
+    function testGte() public pure {
+        assertTrue(ERC20.wrap(address(2)) >= ERC20.wrap(address(1)));
+
+        assertFalse(ERC20.wrap(address(1)) >= ERC20.wrap(address(2)));
+
+        assertTrue(ERC20.wrap(address(1)) >= ERC20.wrap(address(1)));
+    }
+
+    function testFuzzGte(ERC20 a, ERC20 b) public pure {
+        if (ERC20.unwrap(a) >= ERC20.unwrap(b)) {
+            assertTrue(a >= b);
+        } else {
+            assertFalse(a >= b);
+        }
+    }
+
+    function testLt() public pure {
+        assertTrue(ERC20.wrap(address(1)) < ERC20.wrap(address(2)));
+
+        assertFalse(ERC20.wrap(address(2)) < ERC20.wrap(address(1)));
+    }
+
+    function testFuzzLt(ERC20 a, ERC20 b) public pure {
+        if (ERC20.unwrap(a) < ERC20.unwrap(b)) {
+            assertTrue(a < b);
+        } else {
+            assertFalse(a < b);
+        }
+    }
+
+    function testLte() public pure {
+        assertTrue(ERC20.wrap(address(1)) <= ERC20.wrap(address(2)));
+
+        assertFalse(ERC20.wrap(address(2)) <= ERC20.wrap(address(1)));
+
+        assertTrue(ERC20.wrap(address(1)) <= ERC20.wrap(address(1)));
+    }
+
+    function testFuzzLte(ERC20 a, ERC20 b) public pure {
+        if (ERC20.unwrap(a) <= ERC20.unwrap(b)) {
+            assertTrue(a <= b);
+        } else {
+            assertFalse(a <= b);
+        }
+    }
+
+    function testAdd() public pure {
+        assertTrue(ERC20.wrap(address(1)) + ERC20.wrap(address(2)) == ERC20.wrap(address(3)));
+    }
+
+    function testAddOverflow() public {
+        vm.expectRevert();
+        ERC20.wrap(address(type(uint160).max)) + ERC20.wrap(address(1));
+    }
+
+    function testFuzzAdd(ERC20 a, ERC20 b, ERC20 c) public {
+        if (type(uint160).max - asU160(a) < asU160(b)) {
+            vm.expectRevert();
+            a + b;
+        } else if (asU160(a) + asU160(b) == asU160(c)) {
+            assertTrue(a + b == c);
+        } else {
+            assertFalse(a + b == c);
+        }
+    }
+
+    function testSub() public pure {
+        assertTrue(ERC20.wrap(address(3)) - ERC20.wrap(address(2)) == ERC20.wrap(address(1)));
+    }
+
+    function testSubUnderflow() public {
+        vm.expectRevert();
+        ERC20.wrap(address(1)) - ERC20.wrap(address(2));
+    }
+
+    function testFuzzSub(ERC20 a, ERC20 b, ERC20 c) public {
+        if (asU160(a) < asU160(b)) {
+            vm.expectRevert();
+            a - b;
+        } else if (asU160(a) - asU160(b) == asU160(c)) {
+            assertTrue(a - b == c);
+        } else {
+            assertFalse(a - b == c);
+        }
+    }
+
+    function testMul() public pure {
+        assertTrue(ERC20.wrap(address(2)) * ERC20.wrap(address(3)) == ERC20.wrap(address(6)));
+    }
+
+    function testMulOverflow() public {
+        vm.expectRevert();
+        ERC20.wrap(address(type(uint160).max)) * ERC20.wrap(address(2));
+    }
+
+    function testFuzzMul(ERC20 a, ERC20 b, ERC20 c) public {
+        if (asU160(a) > 0 && type(uint160).max / asU160(a) < asU160(b)) {
+            vm.expectRevert();
+            a * b;
+        } else if (asU160(a) * asU160(b) == asU160(c)) {
+            assertTrue(a * b == c);
+        } else {
+            assertFalse(a * b == c);
+        }
+    }
+
+    function testDiv() public pure {
+        assertTrue(ERC20.wrap(address(6)) / ERC20.wrap(address(3)) == ERC20.wrap(address(2)));
+    }
+
+    function testDivByZero() public {
+        vm.expectRevert();
+        ERC20.wrap(address(1)) / ERC20.wrap(address(0));
+    }
+
+    function testFuzzDiv(ERC20 a, ERC20 b, ERC20 c) public {
+        if (asU160(b) == 0) {
+            vm.expectRevert();
+            a / b;
+        } else if (asU160(a) / asU160(b) == asU160(c)) {
+            assertTrue(a / b == c);
+        } else {
+            assertFalse(a / b == c);
+        }
+    }
+
+    function testMod() public pure {
+        assertTrue(ERC20.wrap(address(6)) % ERC20.wrap(address(4)) == ERC20.wrap(address(2)));
+    }
+
+    function testModByZero() public {
+        vm.expectRevert();
+        ERC20.wrap(address(1)) % ERC20.wrap(address(0));
+    }
+
+    function testFuzzMod(ERC20 a, ERC20 b, ERC20 c) public {
+        if (asU160(b) == 0) {
+            vm.expectRevert();
+            a % b;
+        } else if (asU160(a) % asU160(b) == asU160(c)) {
+            assertTrue(a % b == c);
+        } else {
+            assertFalse(a % b == c);
+        }
+    }
+
+    function testAnd() public pure {
+        assertTrue(ERC20.wrap(address(0x03)) & ERC20.wrap(address(0x02)) == ERC20.wrap(address(0x02)));
+    }
+
+    function testFuzzAnd(ERC20 a, ERC20 b, ERC20 c) public pure {
+        if (asU160(a) & asU160(b) == asU160(c)) {
+            assertTrue(a & b == c);
+        } else {
+            assertFalse(a & b == c);
+        }
+    }
+
+    function testOr() public pure {
+        assertTrue(ERC20.wrap(address(0x03)) | ERC20.wrap(address(0x02)) == ERC20.wrap(address(0x03)));
+    }
+
+    function testFuzzOr(ERC20 a, ERC20 b, ERC20 c) public pure {
+        if (asU160(a) | asU160(b) == asU160(c)) {
+            assertTrue(a | b == c);
+        } else {
+            assertFalse(a | b == c);
+        }
+    }
+
+    function testXor() public pure {
+        assertTrue(ERC20.wrap(address(0x03)) ^ ERC20.wrap(address(0x02)) == ERC20.wrap(address(0x01)));
+    }
+
+    function testFuzzXor(ERC20 a, ERC20 b, ERC20 c) public pure {
+        if (asU160(a) ^ asU160(b) == asU160(c)) {
+            assertTrue(a ^ b == c);
+        } else {
+            assertFalse(a ^ b == c);
+        }
+    }
+
+    function testNot() public pure {
+        assertTrue(~ERC20.wrap(address(0x03)) == ERC20.wrap(address(0xFfFfFfFFfFFFFfffffFfFfFffffffFFfFFFfFFfc)));
+    }
+
+    function testFuzzNot(ERC20 a) public pure {
+        uint160 inverse = ~asU160(a);
+
+        assertTrue(~a == ERC20.wrap(address(inverse)));
+    }
+
+    function asU160(ERC20 a) public pure returns (uint160) {
+        return uint160(ERC20.unwrap(a));
+    }
 }
