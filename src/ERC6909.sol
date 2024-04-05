@@ -43,7 +43,7 @@ using {
 //      01. store supportsInterface selector in memory
 //      02. store interfaceId in memory
 //      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
-//      04. return boolean from memory
+//      04. assign returned value to output
 function supportsInterface(ERC6909 erc6909, bytes4 interfaceId) view returns (bool output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x01ffc9a700000000000000000000000000000000000000000000000000000000)
