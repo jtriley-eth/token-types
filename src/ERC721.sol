@@ -3,8 +3,8 @@ pragma solidity ^0.8.25;
 
 // ## ERC721 Type Wrapper
 //
-// This type wraps the address primitive type and contains methods to call the core ERC721 interface
-// without allocating new memory. State transition methods also perform returndata validation.
+// This type wraps the address primitive type and contains functions to call the core ERC721 interface
+// without allocating new memory. State transition functions also perform returndata validation.
 //
 // All external calls that fail will revert internally. This is to simplify the API.
 type ERC721 is address;

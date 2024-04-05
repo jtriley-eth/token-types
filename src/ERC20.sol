@@ -3,8 +3,8 @@ pragma solidity ^0.8.25;
 
 // ## ERC20 Type Wrapper
 //
-// This type wraps the address primitive type and contains methods to call the core ERC20 interface
-// without allocating new memory. State transition methods also perform returndata validation.
+// This type wraps the address primitive type and contains functions to call the core ERC20 interface
+// without allocating new memory. State transition functions also perform returndata validation.
 //
 // All external calls that fail will revert internally. This is to simplify the API.
 type ERC20 is address;

@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 // ## ERC6909 Type Wrapper
 //
-// This type wraps the address primitive type and contains methods to call the core ERC6909
+// This type wraps the address primitive type and contains functions to call the core ERC6909
 // interface without allocating new memory.
 //
 // All external calls that fail will revert internally. This is to simplify the API.
