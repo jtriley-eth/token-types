@@ -1,5 +1,5 @@
 [profile.default]
-evm_version = "shanghai"
+evm_version = "cancun"
 via_ir = true
 bytecode_hash = "none"
 
