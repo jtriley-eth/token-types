@@ -37,6 +37,14 @@ using {
     not as ~
 } for ERC721 global;
 
+// -------------------------------------------------------------------------------------------------
+// Query ERC721.supportsInterface without allocating new memory.
+//
+// Procedures:
+//      01. store supportsInterface selector in memory
+//      02. store interfaceId in memory
+//      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
+//      04. assign returned value to output
 function supportsInterface(ERC721 erc721, bytes4 interfaceId) view returns (bool output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x01ffc9a700000000000000000000000000000000000000000000000000000000)
@@ -49,6 +57,14 @@ function supportsInterface(ERC721 erc721, bytes4 interfaceId) view returns (bool
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Query ERC721.getApproved without allocating new memory.
+//
+// Procedures:
+//      01. store getApproved selector in memory
+//      02. store tokenId in memory
+//      03. staticcall getApproved, storing result at memory[0]; revert if it fails
+//      04. assign returned value to output
 function getApproved(ERC721 erc721, uint256 tokenId) view returns (address output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x081812fc00000000000000000000000000000000000000000000000000000000)
@@ -61,6 +77,16 @@ function getApproved(ERC721 erc721, uint256 tokenId) view returns (address outpu
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Query ERC721.isApprovedForAll without allocating new memory.
+//
+// Procedures:
+//      01. store isApprovedForAll selector in memory
+//      02. store owner in memory
+//      03. store operator in memory
+//      04. staticcall isApprovedForAll, storing result at memory[0]; revert if it fails
+//      05. assign returned value to output
+//      06. restore upper bits of the free memory pointer to zero
 function isApprovedForAll(ERC721 erc721, address owner, address operator) view returns (bool output) {
     assembly {
         mstore(0x00, 0xe985e9c500000000000000000000000000000000000000000000000000000000)
@@ -77,6 +103,14 @@ function isApprovedForAll(ERC721 erc721, address owner, address operator) view r
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Query ERC721.balanceOf without allocating new memory.
+//
+// Procedures:
+//      01. store balanceOf selector in memory
+//      02. store owner in memory
+//      03. staticcall balanceOf, storing result at memory[0]; revert if it fails
+//      04. assign returned value to output
 function balanceOf(ERC721 erc721, address owner) view returns (uint256 output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x70a0823100000000000000000000000000000000000000000000000000000000)
@@ -89,6 +123,14 @@ function balanceOf(ERC721 erc721, address owner) view returns (uint256 output) {
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Query ERC721.ownerOf without allocating new memory.
+//
+// Procedures:
+//      01. store ownerOf selector in memory
+//      02. store tokenId in memory
+//      03. staticcall ownerOf, storing result at memory[0]; revert if it fails
+//      04. assign returned value to output
 function ownerOf(ERC721 erc721, uint256 tokenId) view returns (address output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x6352211e00000000000000000000000000000000000000000000000000000000)
@@ -101,6 +143,36 @@ function ownerOf(ERC721 erc721, uint256 tokenId) view returns (address output) {
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Call ERC721.safeTransferFrom without allocating new memory.
+//
+// Procedures:
+//      01. load free memory pointer from memory; cache as fmp
+//      02. load length of data from memory; cache as dataLength
+//      03. pattern match the dataLength
+//      04. if dataLength is zero:
+//          a. store `safeTransferFrom(address,address,uint256)` selector in memory
+//          b. store sender in memory
+//          c. store receiver in memory
+//          d. store tokenId in memory
+//          e. call safeTransferFrom; revert if it fails
+//          f. restore free memory pointer to fmp
+//          g. restore zero slot to zero
+//      05. if dataLength is nonzero:
+//          a. store `safeTransferFrom(address,address,uint256,bytes)` selector in memory
+//          b. store sender in memory
+//          c. store receiver in memory
+//          d. store tokenId in memory
+//          e. store data offset in memory
+//          f. copy data, including length, to memory
+//          g. call safeTransferFrom; revert if it fails
+//
+// Notes:
+//      - if data is empty, `safeTransferFrom(address,address,uint256)` is called
+//      - if data is not empty, `safeTransferFrom(address,address,uint256,bytes)` is called
+//      - if data is not empty, calldata is written at the free memory pointer, *however* the free
+//        memory pointer is not updated in this case; this expands memory but does not allocate new
+//        memory, meaning solidity may overwrite the calldata after it is no longer needed.
 function safeTransferFrom(ERC721 erc721, address sender, address receiver, uint256 tokenId, bytes memory data) {
     assembly {
         let fmp := mload(0x40)
@@ -141,6 +213,18 @@ function safeTransferFrom(ERC721 erc721, address sender, address receiver, uint2
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Call ERC721.transferFrom without allocating new memory.
+//
+// Procedures:
+//      01. load free memory pointer from memory; cache as fmp
+//      02. store transferFrom selector in memory
+//      03. store sender in memory
+//      04. store receiver in memory
+//      05. store tokenId in memory
+//      06. call transferFrom; revert if it fails
+//      07. restore free memory pointer to fmp
+//      08. restore zero slot to zero
 function transferFrom(ERC721 erc721, address sender, address receiver, uint256 tokenId) {
     assembly {
         let fmp := mload(0x40)
@@ -161,6 +245,15 @@ function transferFrom(ERC721 erc721, address sender, address receiver, uint256 t
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Call ERC721.approve without allocating new memory.
+//
+// Procedures:
+//      01. store approve selector in memory
+//      02. store operator in memory
+//      03. store tokenId in memory
+//      04. call approve; revert if it fails
+//      05. restore upper bits of the free memory pointer to zero
 function approve(ERC721 erc721, address operator, uint256 tokenId) {
     assembly {
         mstore(0x00, 0x095ea7b300000000000000000000000000000000000000000000000000000000)
@@ -175,6 +268,15 @@ function approve(ERC721 erc721, address operator, uint256 tokenId) {
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+// Call ERC721.setApprovalForAll without allocating new memory.
+//
+// Procedures:
+//      01. store setApprovalForAll selector in memory
+//      02. store operator in memory
+//      03. store approved in memory
+//      04. call setApprovalForAll; revert if it fails
+//      05. restore upper bits of the free memory pointer to zero
 function setApprovalForAll(ERC721 erc721, address operator, bool approved) {
     assembly {
         mstore(0x00, 0xa22cb46500000000000000000000000000000000000000000000000000000000)
