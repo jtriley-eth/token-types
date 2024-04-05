@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.19;
 
-
 // ## ERC6909 Type Wrapper
 //
 // This type wraps the address primitive type and contains methods to call the core ERC6909
