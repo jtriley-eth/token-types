@@ -14,7 +14,7 @@ contract MockERC6909 {
     mapping(address => mapping(uint256 => uint256)) internal _balanceOf;
     mapping(address => mapping(address => mapping(uint256 => uint256))) internal _allowance;
 
-    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view returns (bool) {
         if (shouldThrow) revert();
         return _supportsInterface[interfaceId];
     }
@@ -38,7 +38,7 @@ contract MockERC6909 {
         address receiver,
         uint256 id,
         uint256 amount
-    ) public virtual returns (bool) {
+    ) public returns (bool) {
         if (shouldThrow) revert();
         emit Transfer(msg.sender, msg.sender, receiver, id, amount);
         return returnValue;
@@ -49,7 +49,7 @@ contract MockERC6909 {
         address receiver,
         uint256 id,
         uint256 amount
-    ) public virtual returns (bool) {
+    ) public returns (bool) {
         if (shouldThrow) revert();
         emit Transfer(msg.sender, sender, receiver, id, amount);
         return returnValue;
@@ -59,13 +59,13 @@ contract MockERC6909 {
         address spender,
         uint256 id,
         uint256 amount
-    ) public virtual returns (bool) {
+    ) public returns (bool) {
         if (shouldThrow) revert();
         emit Approval(msg.sender, spender, id, amount);
         return returnValue;
     }
 
-    function setOperator(address operator, bool approved) public virtual returns (bool) {
+    function setOperator(address operator, bool approved) public returns (bool) {
         if (shouldThrow) revert();
         _operator[msg.sender][operator] = approved;
         emit OperatorSet(msg.sender, operator, approved);
