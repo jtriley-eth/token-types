@@ -36,27 +36,29 @@ using {
 
 // -------------------------------------------------------------------------------------------------
 // Query ERC20.totalSupply without allocating new memory.
+//
 // Procedures:
 //      01. store totalSupply selector in memory
 //      02. staticcall totalSupply, storing result at memory[0]; revert if it fails
-//      03. return total supply from memory
-function totalSupply(ERC20 erc20) view returns (uint256 supply) {
+//      03. assign returned value to output
+function totalSupply(ERC20 erc20) view returns (uint256 output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x18160ddd00000000000000000000000000000000000000000000000000000000)
 
         if iszero(staticcall(gas(), erc20, 0x00, 0x04, 0x00, 0x20)) { revert(0x00, 0x00) }
 
-        supply := mload(0x00)
+        output := mload(0x00)
     }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Query ERC20.balanceOf without allocating new memory.
+//
 // Procedures:
 //      01. store balanceOf selector in memory
 //      02. store owner address in memory
 //      03. staticcall balanceOf, storing result at memory[0]; revert if it fails
-//      04. return balance from memory
+//      04. assign returned value to output
 function balanceOf(ERC20 erc20, address owner) view returns (uint256 output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x70a0823100000000000000000000000000000000000000000000000000000000)
@@ -71,13 +73,14 @@ function balanceOf(ERC20 erc20, address owner) view returns (uint256 output) {
 
 // -------------------------------------------------------------------------------------------------
 // Query ERC20.allowance without allocating new memory.
+//
 // Procedures:
 //      01. store allowance selector in memory
 //      02. store owner address in memory
 //      03. store spender address in memory
 //      04. staticcall allowance, storing result at memory[0]; revert if it fails
 //      05. restore the upper bits of the free memory pointer to zero
-//      06. return allowance from memory
+//      06. assign returned value to output
 function allowance(ERC20 erc20, address owner, address spender) view returns (uint256 output) {
     assembly {
         mstore(0x00, 0xdd62ed3e00000000000000000000000000000000000000000000000000000000)
@@ -96,6 +99,7 @@ function allowance(ERC20 erc20, address owner, address spender) view returns (ui
 
 // -------------------------------------------------------------------------------------------------
 // Call ERC20.transfer without allocating new memory.
+//
 // Procedures:
 //      01. store transfer selector in memory
 //      02. store recipient address in memory
@@ -124,6 +128,7 @@ function transfer(ERC20 erc20, address receiver, uint256 amount) {
 
 // -------------------------------------------------------------------------------------------------
 // Call ERC20.transferFrom without allocating new memory.
+//
 // Procedures:
 //      01. load the free memory pointer; cache as `fmp`
 //      02. store transferFrom selector in memory
@@ -161,6 +166,7 @@ function transferFrom(ERC20 erc20, address sender, address receiver, uint256 amo
 
 // -------------------------------------------------------------------------------------------------
 // Call ERC20.approve without allocating new memory.
+//
 // Procedures:
 //      01. store approve selector in memory
 //      02. store spender address in memory
