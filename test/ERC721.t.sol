@@ -17,7 +17,7 @@ contract ERC721Test is Test {
     }
 
     function testSupportsInterface() public {
-        mock.setSupportsInterface(0xffffffff,  true);
+        mock.setSupportsInterface(0xffffffff, true);
         assertTrue(handler.supportsInterface(0xffffffff));
     }
 
@@ -152,7 +152,14 @@ contract ERC721Test is Test {
         handler.safeTransferFrom(address(1), address(2), 3);
     }
 
-    function testFuzzSafeTransferFrom(bool shouldThrow, bool withData, address from, address to, uint256 tokenId, bytes memory data) public {
+    function testFuzzSafeTransferFrom(
+        bool shouldThrow,
+        bool withData,
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public {
         mock.setShouldThrow(shouldThrow);
         if (shouldThrow) {
             vm.expectRevert();

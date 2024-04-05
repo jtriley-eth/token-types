@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.24;
+pragma solidity 0.8.25;
 
 import { ERC20 } from "../src/ERC20.sol";
 import { MockERC20 } from "./mock/MockERC20.sol";
@@ -36,7 +36,7 @@ contract ERC20Test is Test {
             handler.totalSupply();
         } else {
             assertEq(handler.totalSupply(), supply);
-        }   
+        }
     }
 
     function testBalanceOf() public {

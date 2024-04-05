@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.25;
 
 // ## ERC20 Type Wrapper
 //
@@ -196,37 +196,49 @@ function approve(ERC20 erc20, address spender, uint256 amount) {
 // -------------------------------------------------------------------------------------------------
 // Returns `true` if the two ERC20 instances are equal, `false` otherwise.
 function eq(ERC20 lhs, ERC20 rhs) pure returns (bool output) {
-    assembly { output := eq(lhs, rhs) }
+    assembly {
+        output := eq(lhs, rhs)
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns `true` if the two ERC20 instances are not equal, `false` otherwise.
 function neq(ERC20 lhs, ERC20 rhs) pure returns (bool output) {
-    assembly { output := iszero(eq(lhs, rhs)) }
+    assembly {
+        output := iszero(eq(lhs, rhs))
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns `true` if `lhs` is greater than `rhs`, `false` otherwise.
 function gt(ERC20 lhs, ERC20 rhs) pure returns (bool output) {
-    assembly { output := gt(lhs, rhs) }
+    assembly {
+        output := gt(lhs, rhs)
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns `true` if `lhs` is greater than or equal to `rhs`, `false` otherwise.
 function gte(ERC20 lhs, ERC20 rhs) pure returns (bool output) {
-    assembly { output := iszero(lt(lhs, rhs))}
+    assembly {
+        output := iszero(lt(lhs, rhs))
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns `true` if `lhs` is less than `rhs`, `false` otherwise.
 function lt(ERC20 lhs, ERC20 rhs) pure returns (bool output) {
-    assembly { output := lt(lhs, rhs) }
+    assembly {
+        output := lt(lhs, rhs)
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns `true` if `lhs` is less than or equal to `rhs`, `false` otherwise.
 function lte(ERC20 lhs, ERC20 rhs) pure returns (bool output) {
-    assembly { output := iszero(gt(lhs, rhs)) }
+    assembly {
+        output := iszero(gt(lhs, rhs))
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -279,23 +291,31 @@ function mod(ERC20 lhs, ERC20 rhs) pure returns (ERC20 output) {
 // -------------------------------------------------------------------------------------------------
 // Returns the bitwise AND of two ERC20 instances.
 function and(ERC20 lhs, ERC20 rhs) pure returns (ERC20 output) {
-    assembly { output := and(lhs, rhs) }
+    assembly {
+        output := and(lhs, rhs)
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns the bitwise OR of two ERC20 instances.
 function or(ERC20 lhs, ERC20 rhs) pure returns (ERC20 output) {
-    assembly { output := or(lhs, rhs) }
+    assembly {
+        output := or(lhs, rhs)
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns the bitwise XOR of two ERC20 instances.
 function xor(ERC20 lhs, ERC20 rhs) pure returns (ERC20 output) {
-    assembly { output := xor(lhs, rhs) }
+    assembly {
+        output := xor(lhs, rhs)
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
 // Returns the bitwise NOT of an ERC20 instance.
 function not(ERC20 lhs) pure returns (ERC20 output) {
-    assembly { output := and(not(lhs), 0xffffffffffffffffffffffffffffffffffffffff) }
+    assembly {
+        output := and(not(lhs), 0xffffffffffffffffffffffffffffffffffffffff)
+    }
 }

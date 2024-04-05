@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.24;
+pragma solidity 0.8.25;
 
 import { ERC6909 } from "../src/ERC6909.sol";
 import { MockERC6909 } from "./mock/MockERC6909.sol";
@@ -71,7 +71,13 @@ contract ERC6909Test is Test {
         handler.allowance(address(this), address(this), 0);
     }
 
-    function testFuzzAllowance(bool shouldThrow, address owner, address spender, uint256 id, uint256 allowance) public {
+    function testFuzzAllowance(
+        bool shouldThrow,
+        address owner,
+        address spender,
+        uint256 id,
+        uint256 allowance
+    ) public {
         mock.setShouldThrow(shouldThrow);
         if (shouldThrow) {
             vm.expectRevert();
@@ -124,7 +130,13 @@ contract ERC6909Test is Test {
         handler.transfer(address(0x01), 2, 3);
     }
 
-    function testFuzzTransfer(bool shouldThrow, bool returnValue, address receiver, uint256 id, uint256 amount) public {
+    function testFuzzTransfer(
+        bool shouldThrow,
+        bool returnValue,
+        address receiver,
+        uint256 id,
+        uint256 amount
+    ) public {
         mock.setShouldThrow(shouldThrow);
         mock.setReturnValue(returnValue);
         if (shouldThrow || !returnValue) {
@@ -157,7 +169,14 @@ contract ERC6909Test is Test {
         handler.transferFrom(address(0x01), address(0x02), 3, 4);
     }
 
-    function testFuzzTransferFrom(bool shouldThrow, bool returnValue, address sender, address receiver, uint256 id, uint256 amount) public {
+    function testFuzzTransferFrom(
+        bool shouldThrow,
+        bool returnValue,
+        address sender,
+        address receiver,
+        uint256 id,
+        uint256 amount
+    ) public {
         mock.setShouldThrow(shouldThrow);
         mock.setReturnValue(returnValue);
         if (shouldThrow || !returnValue) {

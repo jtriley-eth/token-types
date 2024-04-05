@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.24;
+pragma solidity 0.8.25;
 
 contract MockERC6909 {
     event OperatorSet(address indexed owner, address indexed operator, bool approved);
@@ -34,32 +34,19 @@ contract MockERC6909 {
         return _operator[owner][operator];
     }
 
-    function transfer(
-        address receiver,
-        uint256 id,
-        uint256 amount
-    ) public returns (bool) {
+    function transfer(address receiver, uint256 id, uint256 amount) public returns (bool) {
         if (shouldThrow) revert();
         emit Transfer(msg.sender, msg.sender, receiver, id, amount);
         return returnValue;
     }
 
-    function transferFrom(
-        address sender,
-        address receiver,
-        uint256 id,
-        uint256 amount
-    ) public returns (bool) {
+    function transferFrom(address sender, address receiver, uint256 id, uint256 amount) public returns (bool) {
         if (shouldThrow) revert();
         emit Transfer(msg.sender, sender, receiver, id, amount);
         return returnValue;
     }
 
-    function approve(
-        address spender,
-        uint256 id,
-        uint256 amount
-    ) public returns (bool) {
+    function approve(address spender, uint256 id, uint256 amount) public returns (bool) {
         if (shouldThrow) revert();
         emit Approval(msg.sender, spender, id, amount);
         return returnValue;

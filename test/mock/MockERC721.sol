@@ -47,32 +47,19 @@ contract MockERC721 {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public {
+    function transferFrom(address from, address to, uint256 id) public {
         if (shouldThrow) revert();
 
         emit Transfer(from, to, id);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public {
+    function safeTransferFrom(address from, address to, uint256 id) public {
         if (shouldThrow) revert();
 
         emit Transfer(from, to, id);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        bytes calldata data
-    ) public {
+    function safeTransferFrom(address from, address to, uint256 id, bytes calldata data) public {
         if (shouldThrow) revert();
 
         // this is not a real event, just want to ensure the data comes through correctly.

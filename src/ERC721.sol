@@ -108,7 +108,6 @@ function safeTransferFrom(ERC721 erc721, address sender, address receiver, uint2
         let dataLength := mload(data)
 
         switch dataLength
-
         case 0x00 {
             mstore(0x00, 0x42842e0e00000000000000000000000000000000000000000000000000000000)
 
@@ -124,7 +123,6 @@ function safeTransferFrom(ERC721 erc721, address sender, address receiver, uint2
 
             mstore(0x60, 0x00)
         }
-
         default {
             mstore(add(fmp, 0x00), 0xb88d4fde00000000000000000000000000000000000000000000000000000000)
 

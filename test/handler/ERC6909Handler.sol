@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.24;
+pragma solidity 0.8.25;
 
 import { ERC6909 } from "../../src/ERC6909.sol";
 
