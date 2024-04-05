@@ -1,17 +1,27 @@
 ## Token Types
 
-Interfaces are expensive. They allocate new memory on each call regardless of whether the encoded
-data is reused or not.
+### Motivation
 
-"Safe" transfer libraries are a patch and handle the influential companies that couldn't be bothered
-to actually conform to the ERC20 specification, but they're still clunky and applying functions to
-interfaces that have independent functionality clutters the namespace and makes code harder to read,
-and we collectively spend far longer reading code than writing, so we should care about it as devs.
+Interfaces were a good abstraction for their time, but are outdated. Interface interactions allocate
+memory and abstract away important edge cases in smart contract interactions.
 
-So here's the solution. We define custom types over the `address` primitive. The custom types have
-similar names to the contract interface, as well as the functions that would otherwise sit on the
-interface, but instead of generating solidity's abi encoding and memory allocations, we instead use
-the scratch space to make external calls with no additional memory allocations.
+"Safe" transfer libraries are a patch, using function-call syntax to create a syntactically similar
+interface to external contracts with custom checks, such as the notorious ERC20 noncompliance edge
+cases where ERC20 tokens return no data. However, this is a clunky solution, especially in cases
+where the library "applies" functions to the same namespace as the core interface. This makes
+reasoning about a type's API difficult. We collectively spend far more time reading code than
+writing, so we should care about this.
+
+Presented is one solution. We define custom type aliases over the `address` primitive. The custom
+types have the same names as the contract interfaces, contain the same functions that would
+otherwise exist in the interface's namespace, but instead of generating solidity's enshrined
+interface abstractions, we optimize the obvious cases and remove new memory allocations.
+
+There are cases in which memory is expanded, such as dynamically sized values with unknown bounds at
+compile time; however, the free memory pointer is never increased, meaning in the rare case where
+evm memory is expanded, it can be reused by the solidity compiler.
+
+### Basic Usage
 
 ```solidity
 // SPDX-License-Identifier: AGPL-3.0-only
@@ -35,3 +45,11 @@ contract Vault {
     }
 }
 ```
+
+### Existing Types
+
+Documentation is prefixed to respective type and function definitions.
+
+- [`ERC20`](src/ERC20.sol)
+- [`ERC721`](src/ERC721.sol)
+- [`ERC6909`](src/ERC6909.sol)
