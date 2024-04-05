@@ -87,8 +87,4 @@ contract MockERC20 {
     function setShouldReturnAnything(bool anything) external {
         shouldReturnAnything = anything;
     }
-
-    fallback() external {
-        return;
-    }
 }
