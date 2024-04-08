@@ -170,9 +170,8 @@ function ownerOf(ERC721 erc721, uint256 tokenId) view returns (address output) {
 // Notes:
 //      - if data is empty, `safeTransferFrom(address,address,uint256)` is called
 //      - if data is not empty, `safeTransferFrom(address,address,uint256,bytes)` is called
-//      - if data is not empty, calldata is written at the free memory pointer, *however* the free
-//        memory pointer is not updated in this case; this expands memory but does not allocate new
-//        memory, meaning solidity may overwrite the calldata after it is no longer needed.
+//      - if data is not empty, the call payload is constructed at the free memory pointer, but it
+//        does not update the free memory pointer, allowing the memory to be reused.
 function safeTransferFrom(ERC721 erc721, address sender, address receiver, uint256 tokenId, bytes memory data) {
     assembly {
         let fmp := mload(0x40)
