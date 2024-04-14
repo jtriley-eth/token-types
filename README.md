@@ -52,4 +52,6 @@ Documentation is prefixed to respective type and function definitions.
 
 - [`ERC20`](src/ERC20.sol)
 - [`ERC721`](src/ERC721.sol)
+  - [`ERC721Receiver`](src/receivers/ERC721Receiver.sol)
+- [`ERC4626`](src/ERC4626.sol)
 - [`ERC6909`](src/ERC6909.sol)
