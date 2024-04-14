@@ -10,20 +10,11 @@ contract ERC721ReceiverHandler {
         receiver = ERC721Receiver.wrap(_receiver);
     }
 
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId
-    ) external {
+    function onERC721Received(address operator, address from, uint256 tokenId) external {
         receiver.onERC721Received(operator, from, tokenId);
     }
 
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) external {
+    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) external {
         receiver.onERC721ReceivedWithData(operator, from, tokenId, data);
     }
 }

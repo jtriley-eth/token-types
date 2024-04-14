@@ -51,12 +51,7 @@ using {
 //      - if receiver is not a contract, no action is taken.
 //      - the call payload is constructed at the free memory pointer, but it does not update the
 //        free memory pointer, allowing the memory to be reused.
-function onERC721Received(
-    ERC721Receiver receiver,
-    address operator,
-    address sender,
-    uint256 id
-) {
+function onERC721Received(ERC721Receiver receiver, address operator, address sender, uint256 id) {
     assembly ("memory-safe") {
         if extcodesize(receiver) {
             let fmp := mload(0x40)
@@ -263,4 +258,3 @@ function not(ERC721Receiver lhs) pure returns (ERC721Receiver output) {
         output := and(not(lhs), 0xffffffffffffffffffffffffffffffffffffffff)
     }
 }
-

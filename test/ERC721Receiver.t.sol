@@ -281,7 +281,10 @@ contract ERC721ReceiverTest is Test {
     }
 
     function testAnd() public pure {
-        assertTrue(ERC721Receiver.wrap(address(0x03)) & ERC721Receiver.wrap(address(0x02)) == ERC721Receiver.wrap(address(0x02)));
+        assertTrue(
+            ERC721Receiver.wrap(address(0x03)) & ERC721Receiver.wrap(address(0x02))
+                == ERC721Receiver.wrap(address(0x02))
+        );
     }
 
     function testFuzzAnd(ERC721Receiver a, ERC721Receiver b, ERC721Receiver c) public pure {
@@ -293,7 +296,10 @@ contract ERC721ReceiverTest is Test {
     }
 
     function testOr() public pure {
-        assertTrue(ERC721Receiver.wrap(address(0x03)) | ERC721Receiver.wrap(address(0x02)) == ERC721Receiver.wrap(address(0x03)));
+        assertTrue(
+            ERC721Receiver.wrap(address(0x03)) | ERC721Receiver.wrap(address(0x02))
+                == ERC721Receiver.wrap(address(0x03))
+        );
     }
 
     function testFuzzOr(ERC721Receiver a, ERC721Receiver b, ERC721Receiver c) public pure {
@@ -305,7 +311,10 @@ contract ERC721ReceiverTest is Test {
     }
 
     function testXor() public pure {
-        assertTrue(ERC721Receiver.wrap(address(0x03)) ^ ERC721Receiver.wrap(address(0x02)) == ERC721Receiver.wrap(address(0x01)));
+        assertTrue(
+            ERC721Receiver.wrap(address(0x03)) ^ ERC721Receiver.wrap(address(0x02))
+                == ERC721Receiver.wrap(address(0x01))
+        );
     }
 
     function testFuzzXor(ERC721Receiver a, ERC721Receiver b, ERC721Receiver c) public pure {
@@ -317,7 +326,10 @@ contract ERC721ReceiverTest is Test {
     }
 
     function testNot() public pure {
-        assertTrue(~ERC721Receiver.wrap(address(0x03)) == ERC721Receiver.wrap(address(0xFfFfFfFFfFFFFfffffFfFfFffffffFFfFFFfFFfc)));
+        assertTrue(
+            ~ERC721Receiver.wrap(address(0x03))
+                == ERC721Receiver.wrap(address(0xFfFfFfFFfFFFFfffffFfFfFffffffFFfFFFfFFfc))
+        );
     }
 
     function testFuzzNot(ERC721Receiver a) public pure {
