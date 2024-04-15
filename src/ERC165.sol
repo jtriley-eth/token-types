@@ -33,7 +33,7 @@ using {
 // Query ERC165.supportsInterface without allocating new memory.
 //
 // Procedures:
-//      01. shifts interface id by 224 bits to pack with the selector
+//      01. right shifts interface id by 32 bits to pack with the selector
 //      02. store the packed supportsInterface selector and interface id in memory
 //      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
 //      04. assign returned value to output

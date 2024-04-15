@@ -41,15 +41,15 @@ using {
 // Query ERC721.supportsInterface without allocating new memory.
 //
 // Procedures:
-//      01. store supportsInterface selector in memory
-//      02. store interfaceId in memory
+//      01. right shifts interface id by 32 bits to pack with the selector
+//      02. store the packed supportsInterface selector and interface id in memory
 //      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
 //      04. assign returned value to output
 function supportsInterface(ERC721 erc721, bytes4 interfaceId) view returns (bool output) {
-    assembly ("memory-safe") {
-        mstore(0x00, 0x01ffc9a700000000000000000000000000000000000000000000000000000000)
+    assembly {
+        interfaceId := shr(0x20, interfaceId)
 
-        mstore(0x04, interfaceId)
+        mstore(0x00, or(interfaceId, 0x01ffc9a700000000000000000000000000000000000000000000000000000000))
 
         if iszero(staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
 
