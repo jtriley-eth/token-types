@@ -7,7 +7,8 @@ contract MockERC721 {
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
     event TransferWithData(address indexed from, address to, uint256 indexed id, bytes data);
 
-    bool shouldThrow = false;
+    bool public shouldThrow = false;
+    bool public shouldReturnAnything = true;
 
     mapping(uint256 => address) internal _ownerOf;
     mapping(address => uint256) internal _balanceOf;
@@ -17,22 +18,46 @@ contract MockERC721 {
 
     function ownerOf(uint256 id) public view returns (address owner) {
         if (shouldThrow) revert();
-        return _ownerOf[id];
+        if (shouldReturnAnything) {
+            return _ownerOf[id];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function balanceOf(address owner) public view returns (uint256) {
         if (shouldThrow) revert();
-        return _balanceOf[owner];
+        if (shouldReturnAnything) {
+            return _balanceOf[owner];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function getApproved(uint256 id) public view returns (address) {
         if (shouldThrow) revert();
-        return _getApproved[id];
+        if (shouldReturnAnything) {
+            return _getApproved[id];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function isApprovedForAll(address owner, address operator) public view returns (bool) {
         if (shouldThrow) revert();
-        return _isApprovedForAll[owner][operator];
+        if (shouldReturnAnything) {
+            return _isApprovedForAll[owner][operator];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function approve(address spender, uint256 id) public {
@@ -68,7 +93,13 @@ contract MockERC721 {
 
     function supportsInterface(bytes4 interfaceId) public view returns (bool) {
         if (shouldThrow) revert();
-        return _supportsInterface[interfaceId];
+        if (shouldReturnAnything) {
+            return _supportsInterface[interfaceId];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function setOwnerOf(uint256 id, address owner) public {
@@ -93,5 +124,9 @@ contract MockERC721 {
 
     function setShouldThrow(bool _shouldThrow) public {
         shouldThrow = _shouldThrow;
+    }
+
+    function setShouldReturnAnything(bool _shouldReturnAnything) public {
+        shouldReturnAnything = _shouldReturnAnything;
     }
 }

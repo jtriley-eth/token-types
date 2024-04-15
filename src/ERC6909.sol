@@ -4,7 +4,7 @@ pragma solidity ^0.8.25;
 // ## ERC6909 Type Wrapper
 //
 // This type wraps the address primitive type and contains functions to call the core ERC6909
-// interface without allocating new memory.
+// interface without allocating new memory. Functions perform returndata validation.
 //
 // All external calls that fail will revert internally. This is to simplify the API.
 type ERC6909 is address;
@@ -42,15 +42,21 @@ using {
 // Procedures:
 //      01. right shifts interface id by 32 bits to pack with the selector
 //      02. store the packed supportsInterface selector and interface id in memory
-//      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
-//      04. assign returned value to output
+//      03. staticcall supportsInterface; cache as ok
+//      04. check that the return value is 32 bytes; compose with ok
+//      05. revert if ok is false
+//      06. assign the return value to output
 function supportsInterface(ERC6909 erc6909, bytes4 interfaceId) view returns (bool output) {
     assembly {
         interfaceId := shr(0x20, interfaceId)
 
         mstore(0x00, or(interfaceId, 0x01ffc9a700000000000000000000000000000000000000000000000000000000))
 
-        if iszero(staticcall(gas(), erc6909, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc6909, 0x00, 0x24, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
     }
@@ -63,9 +69,11 @@ function supportsInterface(ERC6909 erc6909, bytes4 interfaceId) view returns (bo
 //      01. store balanceOf selector in memory
 //      02. store owner in memory
 //      03. store id in memory
-//      04. staticcall balanceOf, storing result at memory[0]; revert if it fails
-//      05. assign returned value to output
-//      06. restore upper bits of the free memory pointer to zero
+//      04. staticcall balanceOf; cache as ok
+//      05. check that the return value is 32 bytes; compose with ok
+//      06. revert if ok is false
+//      07. assign the return value to output
+//      08. restore the upper bits of the free memory pointer to zero
 function balanceOf(ERC6909 erc6909, address owner, uint256 id) view returns (uint256 output) {
     assembly {
         mstore(0x00, 0x00fdd58e00000000000000000000000000000000000000000000000000000000)
@@ -74,7 +82,11 @@ function balanceOf(ERC6909 erc6909, address owner, uint256 id) view returns (uin
 
         mstore(0x24, id)
 
-        if iszero(staticcall(gas(), erc6909, 0x00, 0x44, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc6909, 0x00, 0x44, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
 
@@ -91,10 +103,12 @@ function balanceOf(ERC6909 erc6909, address owner, uint256 id) view returns (uin
 //      03. store owner in memory
 //      04. store spender in memory
 //      05. store id in memory
-//      06. staticcall allowance, storing result at memory[0]; revert if it fails
-//      07. assign returned value to output
-//      08. restore free memory pointer to fmp
-//      09. restore zero slot to zero
+//      06. staticcall allowance; cache as ok
+//      07. check that the return value is 32 bytes; compose with ok
+//      08. revert if ok is false
+//      09. assign the return value to output
+//      10. restore the free memory pointer to fmp
+//      11. restore the zero slot to zero
 function allowance(ERC6909 erc6909, address owner, address spender, uint256 id) view returns (uint256 output) {
     assembly {
         let fmp := mload(0x40)
@@ -107,7 +121,11 @@ function allowance(ERC6909 erc6909, address owner, address spender, uint256 id) 
 
         mstore(0x44, id)
 
-        if iszero(staticcall(gas(), erc6909, 0x00, 0x64, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc6909, 0x00, 0x64, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
 
@@ -124,9 +142,11 @@ function allowance(ERC6909 erc6909, address owner, address spender, uint256 id) 
 //      01. store isOperator selector in memory
 //      02. store owner in memory
 //      03. store spender in memory
-//      04. staticcall isOperator, storing result at memory[0]; revert if it fails
-//      05. assign returned value to output
-//      06. restore upper bits of the free memory pointer to zero
+//      04. staticcall isOperator; cache as ok
+//      05. check that the return value is 32 bytes; compose with ok
+//      06. revert if ok is false
+//      07. assign the return value to output
+//      08. restore the upper bits of the free memory pointer to zero
 function isOperator(ERC6909 erc6909, address owner, address spender) view returns (bool output) {
     assembly {
         mstore(0x00, 0xb6363cf200000000000000000000000000000000000000000000000000000000)
@@ -135,7 +155,11 @@ function isOperator(ERC6909 erc6909, address owner, address spender) view return
 
         mstore(0x24, spender)
 
-        if iszero(staticcall(gas(), erc6909, 0x00, 0x44, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc6909, 0x00, 0x44, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
 
@@ -153,10 +177,11 @@ function isOperator(ERC6909 erc6909, address owner, address spender) view return
 //      04. store id in memory
 //      05. store amount in memory
 //      06. call transfer; cache result as ok
-//      07. bitwise and ok with return value
-//      08. if ok is zero (falsy), revert
-//      09. restore free memory pointer to fmp
-//      10. restore zero slot to zero
+//      07. check that the return value is 32 bytes; compose with ok
+//      08. check that the return value is true; compose with ok
+//      09. revert if ok is false
+//      10. restore the free memory pointer to fmp
+//      11. restore the zero slot to zero
 function transfer(ERC6909 erc6909, address receiver, uint256 id, uint256 amount) {
     assembly {
         let fmp := mload(0x40)
@@ -170,6 +195,8 @@ function transfer(ERC6909 erc6909, address receiver, uint256 id, uint256 amount)
         mstore(0x44, amount)
 
         let ok := call(gas(), erc6909, 0x00, 0x00, 0x64, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
 
         ok := and(ok, mload(0x00))
 
@@ -193,11 +220,12 @@ function transfer(ERC6909 erc6909, address receiver, uint256 id, uint256 amount)
 //      06. store id in memory
 //      07. store amount in memory
 //      08. call transferFrom; cache result as ok
-//      09. bitwise and ok with return value
-//      10. if ok is zero (falsy), revert
-//      11. restore free memory pointer to fmp
-//      12. restore zero slot to zero
-//      13. restore first word of allocated memory to allocatedWord
+//      09. check that the return value is 32 bytes; compose with ok
+//      10. check that the return value is true; compose with ok
+//      11. revert if ok is false
+//      12. restore the free memory pointer to fmp
+//      13. restore the zero slot to zero
+//      14. restore the first word of allocated memory to allocatedWord
 function transferFrom(ERC6909 erc6909, address sender, address receiver, uint256 id, uint256 amount) {
     assembly {
         let fmp := mload(0x40)
@@ -215,6 +243,8 @@ function transferFrom(ERC6909 erc6909, address sender, address receiver, uint256
         mstore(0x64, amount)
 
         let ok := call(gas(), erc6909, 0x00, 0x00, 0x84, allocatedWord, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
 
         ok := and(ok, mload(allocatedWord))
 
@@ -238,10 +268,11 @@ function transferFrom(ERC6909 erc6909, address sender, address receiver, uint256
 //      04. store id in memory
 //      05. store amount in memory
 //      06. call approve; cache result as ok
-//      07. bitwise and ok with return value
-//      08. if ok is zero (falsy), revert
-//      09. restore free memory pointer to fmp
-//      10. restore zero slot to zero
+//      07. check that the return value is 32 bytes; compose with ok
+//      08. check that the return value is true; compose with ok
+//      09. revert if ok is false
+//      10. restore the free memory pointer to fmp
+//      11. restore the zero slot to zero
 function approve(ERC6909 erc6909, address spender, uint256 id, uint256 amount) {
     assembly {
         let fmp := mload(0x40)
@@ -255,6 +286,8 @@ function approve(ERC6909 erc6909, address spender, uint256 id, uint256 amount) {
         mstore(0x44, amount)
 
         let ok := call(gas(), erc6909, 0x00, 0x00, 0x64, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
 
         ok := and(ok, mload(0x00))
 
@@ -274,9 +307,10 @@ function approve(ERC6909 erc6909, address spender, uint256 id, uint256 amount) {
 //      02. store spender in memory
 //      03. store approved in memory
 //      04. call setOperator; cache result as ok
-//      05. bitwise and ok with return value
-//      06. if ok is zero (falsy), revert
-//      07. restore upper bits of the free memory pointer to zero
+//      05. check that the return value is 32 bytes; compose with ok
+//      06. check that the return value is true; compose with ok
+//      07. revert if ok is false
+//      08. restore the upper bits of the free memory pointer to zero
 function setOperator(ERC6909 erc6909, address spender, bool approved) {
     assembly {
         mstore(0x00, 0x558a729700000000000000000000000000000000000000000000000000000000)
@@ -286,6 +320,8 @@ function setOperator(ERC6909 erc6909, address spender, bool approved) {
         mstore(0x24, approved)
 
         let ok := call(gas(), erc6909, 0x00, 0x00, 0x44, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
 
         ok := and(ok, mload(0x00))
 

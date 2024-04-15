@@ -37,6 +37,13 @@ contract ERC721ReceiverTest is Test {
         handler.onERC721Received(address(1), address(2), 3);
     }
 
+    function testERC721ReceivedReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+
+        vm.expectRevert();
+        handler.onERC721Received(address(1), address(2), 3);
+    }
+
     function testERC721ReceivedWithData() public {
         vm.expectEmit(true, true, true, true, address(mock));
         emit MockERC721Receiver.Received(address(1), address(2), 3, hex"aabbccdd");
@@ -58,8 +65,16 @@ contract ERC721ReceiverTest is Test {
         handler.onERC721Received(address(1), address(2), 3, hex"aabbccdd");
     }
 
+    function testERC721ReceivedWithDataReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+
+        vm.expectRevert();
+        handler.onERC721Received(address(1), address(2), 3, hex"aabbccdd");
+    }
+
     function testFuzzERC721Received(
         bool shouldThrow,
+        bool returnsAnything,
         bool validReturn,
         address operator,
         address from,
@@ -67,10 +82,11 @@ contract ERC721ReceiverTest is Test {
         bytes memory data
     ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(returnsAnything);
         mock.setReturnValue(validReturn ? MockERC721Receiver.onERC721Received.selector : bytes4(0xaabbccdd));
 
         if (data.length == 0) {
-            if (shouldThrow || !validReturn) {
+            if (shouldThrow || !validReturn || !returnsAnything) {
                 vm.expectRevert();
                 handler.onERC721Received(operator, from, tokenId);
             } else {
@@ -80,7 +96,7 @@ contract ERC721ReceiverTest is Test {
                 handler.onERC721Received(operator, from, tokenId);
             }
         } else {
-            if (shouldThrow || !validReturn) {
+            if (shouldThrow || !validReturn || !returnsAnything) {
                 vm.expectRevert();
                 handler.onERC721Received(operator, from, tokenId, data);
             } else {

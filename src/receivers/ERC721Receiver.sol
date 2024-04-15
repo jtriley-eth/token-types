@@ -43,9 +43,10 @@ using {
 //          e. store the token id in memory
 //          f. store the data offset in memory
 //          g. store the data length (zero) in memory
-//          h. call the receiver contract; cache result as success
-//          i. check that the return value matches the expected selector; compose with success
-//          j. if success is falsy, revert
+//          h. call the receiver contract; cache result as ok
+//          i. check that the return value is 32 bytes; compose with ok
+//          j. check that the return value matches the expected selector; compose with ok
+//          k. if ok is false, revert
 //
 // Notes:
 //      - if receiver is not a contract, no action is taken.
@@ -68,11 +69,13 @@ function onERC721Received(ERC721Receiver receiver, address operator, address sen
 
             mstore(add(fmp, 0x84), 0x00)
 
-            let success := call(gas(), receiver, 0x00, fmp, 0xa4, 0x00, 0x20)
+            let ok := call(gas(), receiver, 0x00, fmp, 0xa4, 0x00, 0x20)
 
-            success := and(success, eq(mload(0x00), 0x150b7a0200000000000000000000000000000000000000000000000000000000))
+            ok := and(ok, eq(returndatasize(), 0x20))
 
-            if iszero(success) { revert(0x00, 0x00) }
+            ok := and(ok, eq(mload(0x00), 0x150b7a0200000000000000000000000000000000000000000000000000000000))
+
+            if iszero(ok) { revert(0x00, 0x00) }
         }
     }
 }
@@ -90,9 +93,10 @@ function onERC721Received(ERC721Receiver receiver, address operator, address sen
 //          f. store the data offset in memory
 //          g. store the data length in memory
 //          h. copy the data from calldata to memory
-//          i. call the receiver contract; cache result as success
-//          j. check that the return value matches the expected selector; compose with success
-//          k. if success is falsy, revert
+//          h. call the receiver contract; cache result as ok
+//          i. check that the return value is 32 bytes; compose with ok
+//          j. check that the return value matches the expected selector; compose with ok
+//          k. if ok is false, revert
 //
 // Notes:
 //      - if receiver is not a contract, no action is taken.
@@ -123,11 +127,13 @@ function onERC721ReceivedWithData(
 
             calldatacopy(add(fmp, 0xa4), data.offset, data.length)
 
-            let success := call(gas(), receiver, 0x00, fmp, add(0xa4, data.length), 0x00, 0x20)
+            let ok := call(gas(), receiver, 0x00, fmp, add(0xa4, data.length), 0x00, 0x20)
 
-            success := and(success, eq(mload(0x00), 0x150b7a0200000000000000000000000000000000000000000000000000000000))
+            ok := and(ok, eq(returndatasize(), 0x20))
 
-            if iszero(success) { revert(0x00, 0x00) }
+            ok := and(ok, eq(mload(0x00), 0x150b7a0200000000000000000000000000000000000000000000000000000000))
+
+            if iszero(ok) { revert(0x00, 0x00) }
         }
     }
 }

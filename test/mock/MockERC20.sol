@@ -15,17 +15,35 @@ contract MockERC20 {
 
     function totalSupply() external view returns (uint256) {
         if (shouldThrow) revert();
-        return _totalSupply;
+        if (shouldReturnAnything) {
+            return _totalSupply;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function balanceOf(address account) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _balanceOf[account];
+        if (shouldReturnAnything) {
+            return _balanceOf[account];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function allowance(address owner, address spender) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _allowance[owner][spender];
+        if (shouldReturnAnything) {
+            return _allowance[owner][spender];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function transfer(address receiver, uint256 amount) external returns (bool) {

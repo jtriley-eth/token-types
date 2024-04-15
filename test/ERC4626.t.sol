@@ -27,10 +27,18 @@ contract ERC4626Test is Test {
         handler.asset();
     }
 
-    function testFuzzAsset(bool shouldThrow, address asset) public {
-        mock.setAsset(asset);
+    function testAssetReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.asset();
+    }
+
+    function testFuzzAsset(bool shouldThrow, bool shouldReturnAnything, address asset) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setAsset(asset);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.asset();
         } else {
@@ -49,10 +57,18 @@ contract ERC4626Test is Test {
         handler.totalAssets();
     }
 
-    function testFuzzTotalAssets(bool shouldThrow, uint256 totalAssets) public {
-        mock.setTotalAssets(totalAssets);
+    function testTotalAssetsReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.totalAssets();
+    }
+
+    function testFuzzTotalAssets(bool shouldThrow, bool shouldReturnAnything, uint256 totalAssets) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setTotalAssets(totalAssets);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.totalAssets();
         } else {
@@ -70,9 +86,17 @@ contract ERC4626Test is Test {
         handler.convertToShares(1);
     }
 
-    function testFuzzConvertToShares(bool shouldThrow, uint256 assets) public {
+    function testConvertToSharesReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.convertToShares(1);
+    }
+
+    function testFuzzConvertToShares(bool shouldThrow, bool shouldReturnAnything, uint256 assets) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.convertToShares(assets);
         } else {
@@ -90,9 +114,17 @@ contract ERC4626Test is Test {
         handler.convertToAssets(1);
     }
 
-    function testFuzzConvertToAssets(bool shouldThrow, uint256 shares) public {
+    function testConvertToAssetsReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.convertToAssets(1);
+    }
+
+    function testFuzzConvertToAssets(bool shouldThrow, bool shouldReturnAnything, uint256 shares) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.convertToAssets(shares);
         } else {
@@ -111,14 +143,22 @@ contract ERC4626Test is Test {
         handler.maxDeposit(address(0x01));
     }
 
-    function testFuzzMaxDeposit(bool shouldThrow, address account, uint256 maxDeposit) public {
-        mock.setMaxDeposit(account, maxDeposit);
+    function testMaxDepositReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.maxDeposit(address(0x01));
+    }
+
+    function testFuzzMaxDeposit(bool shouldThrow, bool shouldReturnAnything, address account, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setMaxDeposit(account, amount);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.maxDeposit(account);
         } else {
-            assertEq(handler.maxDeposit(account), maxDeposit);
+            assertEq(handler.maxDeposit(account), amount);
         }
     }
 
@@ -132,9 +172,17 @@ contract ERC4626Test is Test {
         handler.previewDeposit(1);
     }
 
-    function testFuzzPreviewDeposit(bool shouldThrow, uint256 amount) public {
+    function testPreviewDepositReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.previewDeposit(1);
+    }
+
+    function testFuzzPreviewDeposit(bool shouldThrow, bool shouldReturnAnything, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.previewDeposit(amount);
         } else {
@@ -155,9 +203,17 @@ contract ERC4626Test is Test {
         handler.deposit(1, address(0x02));
     }
 
-    function testFuzzDeposit(bool shouldThrow, address account, uint256 amount) public {
+    function testDepositReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.deposit(1, address(0x02));
+    }
+
+    function testFuzzDeposit(bool shouldThrow, bool shouldReturnAnything, uint256 amount, address account) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.deposit(amount, account);
         } else {
@@ -179,14 +235,22 @@ contract ERC4626Test is Test {
         handler.maxMint(address(0x01));
     }
 
-    function testFuzzMaxMint(bool shouldThrow, address account, uint256 maxMint) public {
-        mock.setMaxMint(account, maxMint);
+    function testMaxMintReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.maxMint(address(0x01));
+    }
+
+    function testFuzzMaxMint(bool shouldThrow, bool shouldReturnAnything, address account, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setMaxMint(account, amount);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.maxMint(account);
         } else {
-            assertEq(handler.maxMint(account), maxMint);
+            assertEq(handler.maxMint(account), amount);
         }
     }
 
@@ -200,9 +264,17 @@ contract ERC4626Test is Test {
         handler.previewMint(1);
     }
 
-    function testFuzzPreviewMint(bool shouldThrow, uint256 amount) public {
+    function testPreviewMintReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.previewMint(1);
+    }
+
+    function testFuzzPreviewMint(bool shouldThrow, bool shouldReturnAnything, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.previewMint(amount);
         } else {
@@ -223,9 +295,17 @@ contract ERC4626Test is Test {
         handler.mint(1, address(0x02));
     }
 
-    function testFuzzMint(bool shouldThrow, address account, uint256 amount) public {
+    function testMintReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.mint(1, address(0x02));
+    }
+
+    function testFuzzMint(bool shouldThrow, bool shouldReturnAnything, uint256 amount, address account) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.mint(amount, account);
         } else {
@@ -247,14 +327,22 @@ contract ERC4626Test is Test {
         handler.maxWithdraw(address(0x01));
     }
 
-    function testFuzzMaxWithdraw(bool shouldThrow, address account, uint256 maxWithdraw) public {
-        mock.setMaxWithdraw(account, maxWithdraw);
+    function testMaxWithdrawReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.maxWithdraw(address(0x01));
+    }
+
+    function testFuzzMaxWithdraw(bool shouldThrow, bool shouldReturnAnything, address account, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setMaxWithdraw(account, amount);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.maxWithdraw(account);
         } else {
-            assertEq(handler.maxWithdraw(account), maxWithdraw);
+            assertEq(handler.maxWithdraw(account), amount);
         }
     }
 
@@ -268,9 +356,17 @@ contract ERC4626Test is Test {
         handler.previewWithdraw(1);
     }
 
-    function testFuzzPreviewWithdraw(bool shouldThrow, uint256 amount) public {
+    function testPreviewWithdrawReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.previewWithdraw(1);
+    }
+
+    function testFuzzPreviewWithdraw(bool shouldThrow, bool shouldReturnAnything, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.previewWithdraw(amount);
         } else {
@@ -291,16 +387,30 @@ contract ERC4626Test is Test {
         handler.withdraw(1, address(0x02), address(0x03));
     }
 
-    function testFuzzWithdraw(bool shouldThrow, address receiver, address owner, uint256 amount) public {
+    function testWithdrawReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.withdraw(1, address(0x02), address(0x03));
+    }
+
+    function testFuzzWithdraw(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        uint256 amount,
+        address from,
+        address to
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.withdraw(amount, receiver, owner);
+            handler.withdraw(amount, from, to);
         } else {
             vm.expectEmit(true, true, true, true, address(mock));
-            emit MockERC4626.Withdraw(address(handler), receiver, owner, amount);
+            emit MockERC4626.Withdraw(address(handler), from, to, amount);
 
-            handler.withdraw(amount, receiver, owner);
+            handler.withdraw(amount, from, to);
         }
     }
 
@@ -315,14 +425,22 @@ contract ERC4626Test is Test {
         handler.maxRedeem(address(0x01));
     }
 
-    function testFuzzMaxRedeem(bool shouldThrow, address account, uint256 maxRedeem) public {
-        mock.setMaxRedeem(account, maxRedeem);
+    function testMaxRedeemReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.maxRedeem(address(0x01));
+    }
+
+    function testFuzzMaxRedeem(bool shouldThrow, bool shouldReturnAnything, address account, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setMaxRedeem(account, amount);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.maxRedeem(account);
         } else {
-            assertEq(handler.maxRedeem(account), maxRedeem);
+            assertEq(handler.maxRedeem(account), amount);
         }
     }
 
@@ -336,9 +454,17 @@ contract ERC4626Test is Test {
         handler.previewRedeem(1);
     }
 
-    function testFuzzPreviewRedeem(bool shouldThrow, uint256 amount) public {
+    function testPreviewRedeemReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.previewRedeem(1);
+    }
+
+    function testFuzzPreviewRedeem(bool shouldThrow, bool shouldReturnAnything, uint256 amount) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.previewRedeem(amount);
         } else {
@@ -359,16 +485,30 @@ contract ERC4626Test is Test {
         handler.redeem(1, address(0x02), address(0x03));
     }
 
-    function testFuzzRedeem(bool shouldThrow, address receiver, address owner, uint256 amount) public {
+    function testRedeemReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.redeem(1, address(0x02), address(0x03));
+    }
+
+    function testFuzzRedeem(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        uint256 amount,
+        address from,
+        address to
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.redeem(amount, receiver, owner);
+            handler.redeem(amount, from, to);
         } else {
             vm.expectEmit(true, true, true, true, address(mock));
-            emit MockERC4626.Redeem(address(handler), receiver, owner, amount);
+            emit MockERC4626.Redeem(address(handler), from, to, amount);
 
-            handler.redeem(amount, receiver, owner);
+            handler.redeem(amount, from, to);
         }
     }
 
@@ -384,14 +524,22 @@ contract ERC4626Test is Test {
         handler.totalSupply();
     }
 
-    function testFuzzTotalSupply(bool shouldThrow, uint256 supply) public {
-        mock.setTotalSupply(supply);
+    function testTotalSupplyReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.totalSupply();
+    }
+
+    function testFuzzTotalSupply(bool shouldThrow, bool shouldReturnAnything, uint256 totalSupply) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setTotalSupply(totalSupply);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.totalSupply();
         } else {
-            assertEq(handler.totalSupply(), supply);
+            assertEq(handler.totalSupply(), totalSupply);
         }
     }
 
@@ -407,10 +555,18 @@ contract ERC4626Test is Test {
         handler.balanceOf(address(0x01));
     }
 
-    function testFuzzBalanceOf(bool shouldThrow, address account, uint256 balance) public {
-        mock.setBalanceOf(account, balance);
+    function testBalanceOfReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.balanceOf(address(0x01));
+    }
+
+    function testFuzzBalanceOf(bool shouldThrow, bool shouldReturnAnything, address account, uint256 balance) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setBalanceOf(account, balance);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.balanceOf(account);
         } else {
@@ -430,10 +586,24 @@ contract ERC4626Test is Test {
         handler.allowance(address(0x01), address(0x02));
     }
 
-    function testFuzzAllowance(bool shouldThrow, address owner, address spender, uint256 allowance) public {
-        mock.setAllowance(owner, spender, allowance);
+    function testAllowanceReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.allowance(address(0x01), address(0x02));
+    }
+
+    function testFuzzAllowance(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        address owner,
+        address spender,
+        uint256 allowance
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setAllowance(owner, spender, allowance);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.allowance(owner, spender);
         } else {

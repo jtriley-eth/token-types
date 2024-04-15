@@ -6,6 +6,7 @@ contract MockERC721Receiver {
 
     bool public shouldThrow = false;
     bytes4 public returnValue = this.onERC721Received.selector;
+    bool public shouldReturnAnything = true;
 
     function onERC721Received(
         address operator,
@@ -15,7 +16,13 @@ contract MockERC721Receiver {
     ) external returns (bytes4) {
         if (shouldThrow) revert();
         emit Received(operator, from, tokenId, data);
-        return returnValue;
+        if (shouldReturnAnything) {
+            return returnValue;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function setShouldThrow(bool value) external {
@@ -24,5 +31,9 @@ contract MockERC721Receiver {
 
     function setReturnValue(bytes4 value) external {
         returnValue = value;
+    }
+
+    function setShouldReturnAnything(bool value) external {
+        shouldReturnAnything = value;
     }
 }

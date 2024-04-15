@@ -27,14 +27,26 @@ contract ERC721Test is Test {
         handler.supportsInterface(0xffffffff);
     }
 
-    function testFuzzSupportsInterface(bool shouldThrow, bytes4 interfaceId, bool supportsInterface) public {
+    function testSupportsInterfaceReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.supportsInterface(0xffffffff);
+    }
+
+    function testFuzzSupportsInterface(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        bytes4 interfaceId,
+        bool supported
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        mock.setSupportsInterface(interfaceId, supportsInterface);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setSupportsInterface(interfaceId, supported);
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.supportsInterface(interfaceId);
         } else {
-            assertEq(handler.supportsInterface(interfaceId), supportsInterface);
+            assertEq(handler.supportsInterface(interfaceId), supported);
         }
     }
 
@@ -49,10 +61,22 @@ contract ERC721Test is Test {
         handler.getApproved(1);
     }
 
-    function testFuzzGetApproved(bool shouldThrow, uint256 tokenId, address approved) public {
+    function testGetApprovedReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.getApproved(1);
+    }
+
+    function testFuzzGetApproved(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        uint256 tokenId,
+        address approved
+    ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setApproved(tokenId, approved);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.getApproved(tokenId);
         } else {
@@ -71,10 +95,23 @@ contract ERC721Test is Test {
         handler.isApprovedForAll(address(1), address(2));
     }
 
-    function testFuzzIsApprovedForAll(bool shouldThrow, address owner, address operator, bool approved) public {
+    function testIsApprovedForAllReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.isApprovedForAll(address(1), address(2));
+    }
+
+    function testFuzzIsApprovedForAll(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        address owner,
+        address operator,
+        bool approved
+    ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setIsApprovedForAll(owner, operator, approved);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.isApprovedForAll(owner, operator);
         } else {
@@ -93,10 +130,17 @@ contract ERC721Test is Test {
         handler.balanceOf(address(1));
     }
 
-    function testFuzzBalanceOf(bool shouldThrow, address owner, uint256 balance) public {
+    function testBalanceOfReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.balanceOf(address(1));
+    }
+
+    function testFuzzBalanceOf(bool shouldThrow, bool shouldReturnAnything, address owner, uint256 balance) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setBalanceOf(owner, balance);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.balanceOf(owner);
         } else {
@@ -115,10 +159,17 @@ contract ERC721Test is Test {
         handler.ownerOf(1);
     }
 
-    function testFuzzOwnerOf(bool shouldThrow, uint256 tokenId, address owner) public {
+    function testOwnerOfReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.ownerOf(1);
+    }
+
+    function testFuzzOwnerOf(bool shouldThrow, bool shouldReturnAnything, uint256 tokenId, address owner) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setOwnerOf(tokenId, owner);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.ownerOf(tokenId);
         } else {

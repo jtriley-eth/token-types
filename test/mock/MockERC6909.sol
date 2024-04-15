@@ -8,6 +8,7 @@ contract MockERC6909 {
 
     bool public shouldThrow = false;
     bool public returnValue = true;
+    bool public shouldReturnAnything = true;
 
     mapping(bytes4 => bool) internal _supportsInterface;
     mapping(address => mapping(address => bool)) internal _operator;
@@ -16,47 +17,95 @@ contract MockERC6909 {
 
     function supportsInterface(bytes4 interfaceId) public view returns (bool) {
         if (shouldThrow) revert();
-        return _supportsInterface[interfaceId];
+        if (shouldReturnAnything) {
+            return _supportsInterface[interfaceId];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function balanceOf(address owner, uint256 id) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _balanceOf[owner][id];
+        if (shouldReturnAnything) {
+            return _balanceOf[owner][id];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function allowance(address owner, address spender, uint256 id) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _allowance[owner][spender][id];
+        if (shouldReturnAnything) {
+            return _allowance[owner][spender][id];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function isOperator(address owner, address operator) external view returns (bool) {
         if (shouldThrow) revert();
-        return _operator[owner][operator];
+        if (shouldReturnAnything) {
+            return _operator[owner][operator];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function transfer(address receiver, uint256 id, uint256 amount) public returns (bool) {
         if (shouldThrow) revert();
         emit Transfer(msg.sender, msg.sender, receiver, id, amount);
-        return returnValue;
+        if (shouldReturnAnything) {
+            return returnValue;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function transferFrom(address sender, address receiver, uint256 id, uint256 amount) public returns (bool) {
         if (shouldThrow) revert();
         emit Transfer(msg.sender, sender, receiver, id, amount);
-        return returnValue;
+        if (shouldReturnAnything) {
+            return returnValue;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function approve(address spender, uint256 id, uint256 amount) public returns (bool) {
         if (shouldThrow) revert();
         emit Approval(msg.sender, spender, id, amount);
-        return returnValue;
+        if (shouldReturnAnything) {
+            return returnValue;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function setOperator(address operator, bool approved) public returns (bool) {
         if (shouldThrow) revert();
         _operator[msg.sender][operator] = approved;
         emit OperatorSet(msg.sender, operator, approved);
-        return returnValue;
+        if (shouldReturnAnything) {
+            return returnValue;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function setSupportsInterface(bytes4 interfaceId, bool supported) public {
@@ -81,5 +130,9 @@ contract MockERC6909 {
 
     function setReturnValue(bool _returnValue) public {
         returnValue = _returnValue;
+    }
+
+    function setShouldReturnAnything(bool _shouldReturnAnything) public {
+        shouldReturnAnything = _shouldReturnAnything;
     }
 }

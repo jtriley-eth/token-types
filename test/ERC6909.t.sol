@@ -27,14 +27,27 @@ contract ERC6909Test is Test {
         handler.supportsInterface(0xffffffff);
     }
 
-    function testFuzzSupportsInterface(bool shouldThrow, bytes4 interfaceId, bool supportsInterface) public {
+    function testSupportsInterfaceReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.supportsInterface(0xffffffff);
+    }
+
+    function testFuzzSupportsInterface(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        bytes4 interfaceId,
+        bool supported
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setSupportsInterface(interfaceId, supported);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.supportsInterface(interfaceId);
         } else {
-            mock.setSupportsInterface(interfaceId, supportsInterface);
-            assertEq(handler.supportsInterface(interfaceId), supportsInterface);
+            assertEq(supported, handler.supportsInterface(interfaceId));
         }
     }
 
@@ -49,13 +62,27 @@ contract ERC6909Test is Test {
         handler.balanceOf(address(this), 0);
     }
 
-    function testFuzzBalanceOf(bool shouldThrow, address owner, uint256 id, uint256 balance) public {
+    function testBalanceOfReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.balanceOf(address(this), 0);
+    }
+
+    function testFuzzBalanceOf(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        address owner,
+        uint256 id,
+        uint256 balance
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setBalanceOf(owner, id, balance);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.balanceOf(owner, id);
         } else {
-            mock.setBalanceOf(owner, id, balance);
             assertEq(handler.balanceOf(owner, id), balance);
         }
     }
@@ -71,20 +98,29 @@ contract ERC6909Test is Test {
         handler.allowance(address(this), address(this), 0);
     }
 
+    function testAllowanceReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.allowance(address(this), address(this), 0);
+    }
+
     function testFuzzAllowance(
         bool shouldThrow,
+        bool shouldReturnAnything,
         address owner,
-        address spender,
+        address operator,
         uint256 id,
         uint256 allowance
     ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setAllowance(owner, operator, id, allowance);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.allowance(owner, spender, id);
+            handler.allowance(owner, operator, id);
         } else {
-            mock.setAllowance(owner, spender, id, allowance);
-            assertEq(handler.allowance(owner, spender, id), allowance);
+            assertEq(handler.allowance(owner, operator, id), allowance);
         }
     }
 
@@ -99,13 +135,27 @@ contract ERC6909Test is Test {
         handler.isOperator(address(this), address(this));
     }
 
-    function testFuzzIsOperator(bool shouldThrow, address owner, address operator, bool isOperator) public {
+    function testIsOperatorReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.isOperator(address(this), address(this));
+    }
+
+    function testFuzzIsOperator(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        address owner,
+        address operator,
+        bool isOperator
+    ) public {
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        mock.setShouldReturnAnything(shouldReturnAnything);
+        mock.setIsOperator(owner, operator, isOperator);
+
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.isOperator(owner, operator);
         } else {
-            mock.setIsOperator(owner, operator, isOperator);
             assertEq(handler.isOperator(owner, operator), isOperator);
         }
     }
@@ -130,22 +180,31 @@ contract ERC6909Test is Test {
         handler.transfer(address(0x01), 2, 3);
     }
 
+    function testTransferReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.transfer(address(0x01), 2, 3);
+    }
+
     function testFuzzTransfer(
         bool shouldThrow,
+        bool shouldReturnAnything,
         bool returnValue,
-        address receiver,
+        address to,
         uint256 id,
-        uint256 amount
+        uint256 value
     ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setReturnValue(returnValue);
-        if (shouldThrow || !returnValue) {
+
+        if (shouldThrow || !returnValue || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.transfer(receiver, id, amount);
+            handler.transfer(to, id, value);
         } else {
-            vm.expectEmit(returnValue, true, true, true, address(mock));
-            emit MockERC6909.Transfer(address(handler), address(handler), receiver, id, amount);
-            handler.transfer(receiver, id, amount);
+            vm.expectEmit(true, true, true, true, address(mock));
+            emit MockERC6909.Transfer(address(handler), address(handler), to, id, value);
+            handler.transfer(to, id, value);
         }
     }
 
@@ -169,23 +228,32 @@ contract ERC6909Test is Test {
         handler.transferFrom(address(0x01), address(0x02), 3, 4);
     }
 
+    function testTransferFromReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.transferFrom(address(0x01), address(0x02), 3, 4);
+    }
+
     function testFuzzTransferFrom(
         bool shouldThrow,
+        bool shouldReturnAnything,
         bool returnValue,
-        address sender,
-        address receiver,
+        address from,
+        address to,
         uint256 id,
-        uint256 amount
+        uint256 value
     ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setReturnValue(returnValue);
-        if (shouldThrow || !returnValue) {
+
+        if (shouldThrow || !returnValue || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.transferFrom(sender, receiver, id, amount);
+            handler.transferFrom(from, to, id, value);
         } else {
-            vm.expectEmit(returnValue, true, true, true, address(mock));
-            emit MockERC6909.Transfer(address(handler), sender, receiver, id, amount);
-            handler.transferFrom(sender, receiver, id, amount);
+            vm.expectEmit(true, true, true, true, address(mock));
+            emit MockERC6909.Transfer(address(handler), from, to, id, value);
+            handler.transferFrom(from, to, id, value);
         }
     }
 
@@ -209,16 +277,31 @@ contract ERC6909Test is Test {
         handler.approve(address(0x01), 2, 3);
     }
 
-    function testFuzzApprove(bool shouldThrow, bool returnValue, address spender, uint256 id, uint256 amount) public {
+    function testApproveReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.approve(address(0x01), 2, 3);
+    }
+
+    function testFuzzApprove(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        bool returnValue,
+        address operator,
+        uint256 id,
+        uint256 value
+    ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setReturnValue(returnValue);
-        if (shouldThrow || !returnValue) {
+
+        if (shouldThrow || !returnValue || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.approve(spender, id, amount);
+            handler.approve(operator, id, value);
         } else {
-            vm.expectEmit(returnValue, true, true, true, address(mock));
-            emit MockERC6909.Approval(address(handler), spender, id, amount);
-            handler.approve(spender, id, amount);
+            vm.expectEmit(true, true, true, true, address(mock));
+            emit MockERC6909.Approval(address(handler), operator, id, value);
+            handler.approve(operator, id, value);
         }
     }
 
@@ -242,16 +325,30 @@ contract ERC6909Test is Test {
         handler.setOperator(address(0x01), true);
     }
 
-    function testFuzzSetOperator(bool shouldThrow, bool returnValue, address operator, bool approved) public {
+    function testSetOperatorReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.setOperator(address(0x01), true);
+    }
+
+    function testFuzzSetOperator(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        bool returnValue,
+        address operator,
+        bool value
+    ) public {
         mock.setShouldThrow(shouldThrow);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setReturnValue(returnValue);
-        if (shouldThrow || !returnValue) {
+
+        if (shouldThrow || !returnValue || !shouldReturnAnything) {
             vm.expectRevert();
-            handler.setOperator(operator, approved);
+            handler.setOperator(operator, value);
         } else {
-            vm.expectEmit(returnValue, true, true, true, address(mock));
-            emit MockERC6909.OperatorSet(address(handler), operator, approved);
-            handler.setOperator(operator, approved);
+            vm.expectEmit(true, true, true, true, address(mock));
+            emit MockERC6909.OperatorSet(address(handler), operator, value);
+            handler.setOperator(operator, value);
         }
     }
 

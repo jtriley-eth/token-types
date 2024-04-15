@@ -3,19 +3,30 @@ pragma solidity 0.8.25;
 
 contract MockERC165 {
     bool public shouldThrow = false;
+    bool public shouldReturnAnything = true;
 
     mapping(bytes4 => bool) internal _supportsInterface;
 
     function supportsInterface(bytes4 interfaceId) external view returns (bool) {
         if (shouldThrow) revert();
-        return _supportsInterface[interfaceId];
+        if (shouldReturnAnything) {
+            return _supportsInterface[interfaceId];
+        } else {
+            assembly {
+                stop()
+            }
+        }
+    }
+
+    function setSupportsInterface(bytes4 interfaceId, bool value) external {
+        _supportsInterface[interfaceId] = value;
     }
 
     function setShouldThrow(bool throws) external {
         shouldThrow = throws;
     }
 
-    function setSupportsInterface(bytes4 interfaceId, bool value) external {
-        _supportsInterface[interfaceId] = value;
+    function setShouldReturnAnything(bool _shouldReturnAnything) external {
+        shouldReturnAnything = _shouldReturnAnything;
     }
 }

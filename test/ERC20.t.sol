@@ -28,10 +28,17 @@ contract ERC20Test is Test {
         handler.totalSupply();
     }
 
-    function testFuzzTotalSupply(bool shouldThrow, uint256 supply) public {
+    function testTotalSupplyReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.totalSupply();
+    }
+
+    function testFuzzTotalSupply(bool shouldThrow, bool shouldReturnAnything, uint256 supply) public {
         mock.setTotalSupply(supply);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.totalSupply();
         } else {
@@ -51,10 +58,17 @@ contract ERC20Test is Test {
         handler.balanceOf(address(0x01));
     }
 
-    function testFuzzBalanceOf(bool shouldThrow, address account, uint256 balance) public {
+    function testBalanceOfReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.balanceOf(address(0x01));
+    }
+
+    function testFuzzBalanceOf(bool shouldThrow, bool shouldReturnAnything, address account, uint256 balance) public {
         mock.setBalanceOf(account, balance);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.balanceOf(account);
         } else {
@@ -74,10 +88,23 @@ contract ERC20Test is Test {
         handler.allowance(address(0x01), address(0x02));
     }
 
-    function testFuzzAllowance(bool shouldThrow, address owner, address spender, uint256 allowance) public {
+    function testAllowanceReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+        vm.expectRevert();
+        handler.allowance(address(0x01), address(0x02));
+    }
+
+    function testFuzzAllowance(
+        bool shouldThrow,
+        bool shouldReturnAnything,
+        address owner,
+        address spender,
+        uint256 allowance
+    ) public {
         mock.setAllowance(owner, spender, allowance);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setShouldThrow(shouldThrow);
-        if (shouldThrow) {
+        if (shouldThrow || !shouldReturnAnything) {
             vm.expectRevert();
             handler.allowance(owner, spender);
         } else {

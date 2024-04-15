@@ -19,86 +19,182 @@ contract MockERC4626 is MockERC20 {
 
     function asset() external view returns (address) {
         if (shouldThrow) revert();
-        return _asset;
+        if (shouldReturnAnything) {
+            return _asset;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function totalAssets() external view returns (uint256) {
         if (shouldThrow) revert();
-        return _totalAssets;
+        if (shouldReturnAnything) {
+            return _totalAssets;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function convertToShares(uint256 assets) external view returns (uint256) {
         if (shouldThrow) revert();
-        return assets;
+        if (shouldReturnAnything) {
+            return assets;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function convertToAssets(uint256 shares) external view returns (uint256) {
         if (shouldThrow) revert();
-        return shares;
+        if (shouldReturnAnything) {
+            return shares;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function maxDeposit(address receiver) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _maxDeposit[receiver];
+        if (shouldReturnAnything) {
+            return _maxDeposit[receiver];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function previewDeposit(uint256 assets) external view returns (uint256) {
         if (shouldThrow) revert();
-        return assets;
+        if (shouldReturnAnything) {
+            return assets;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function deposit(uint256 assets, address receiver) external returns (uint256) {
         if (shouldThrow) revert();
         emit Deposit(msg.sender, receiver, assets);
-        return assets;
+        if (shouldReturnAnything) {
+            return assets;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function maxMint(address receiver) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _maxMint[receiver];
+        if (shouldReturnAnything) {
+            return _maxMint[receiver];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function previewMint(uint256 shares) external view returns (uint256) {
         if (shouldThrow) revert();
-        return shares;
+        if (shouldReturnAnything) {
+            return shares;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function mint(uint256 shares, address receiver) external returns (uint256) {
         if (shouldThrow) revert();
         emit Mint(msg.sender, receiver, shares);
-        return shares;
+        if (shouldReturnAnything) {
+            return shares;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function maxWithdraw(address receiver) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _maxWithdraw[receiver];
+        if (shouldReturnAnything) {
+            return _maxWithdraw[receiver];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function previewWithdraw(uint256 assets) external view returns (uint256) {
         if (shouldThrow) revert();
-        return assets;
+        if (shouldReturnAnything) {
+            return assets;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function withdraw(uint256 assets, address receiver, address owner) external returns (uint256) {
         if (shouldThrow) revert();
         emit Withdraw(msg.sender, receiver, owner, assets);
-        return assets;
+        if (shouldReturnAnything) {
+            return assets;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function maxRedeem(address receiver) external view returns (uint256) {
         if (shouldThrow) revert();
-        return _maxRedeem[receiver];
+        if (shouldReturnAnything) {
+            return _maxRedeem[receiver];
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function previewRedeem(uint256 shares) external view returns (uint256) {
         if (shouldThrow) revert();
-        return shares;
+        if (shouldReturnAnything) {
+            return shares;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function redeem(uint256 shares, address receiver, address owner) external returns (uint256) {
         if (shouldThrow) revert();
         emit Redeem(msg.sender, receiver, owner, shares);
-        return shares;
+        if (shouldReturnAnything) {
+            return shares;
+        } else {
+            assembly {
+                stop()
+            }
+        }
     }
 
     function setAsset(address asset_) external {

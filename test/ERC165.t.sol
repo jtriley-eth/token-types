@@ -29,11 +29,24 @@ contract ERC165Test is Test {
         handler.supportsInterface(0xaabbccdd);
     }
 
-    function testFuzzSupportsInterface(bool throws, bytes4 interfaceId, bool supported) external {
+    function testSupportsInterfaceReturnsNothing() public {
+        mock.setShouldReturnAnything(false);
+
+        vm.expectRevert();
+        handler.supportsInterface(0xaabbccdd);
+    }
+
+    function testFuzzSupportsInterface(
+        bool throws,
+        bool shouldReturnAnything,
+        bytes4 interfaceId,
+        bool supported
+    ) external {
         mock.setShouldThrow(throws);
+        mock.setShouldReturnAnything(shouldReturnAnything);
         mock.setSupportsInterface(interfaceId, supported);
 
-        if (throws) {
+        if (throws || !shouldReturnAnything) {
             vm.expectRevert();
             handler.supportsInterface(interfaceId);
         } else {

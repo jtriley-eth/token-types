@@ -4,7 +4,7 @@ pragma solidity ^0.8.25;
 // ## ERC721 Type Wrapper
 //
 // This type wraps the address primitive type and contains functions to call the core ERC721 interface
-// without allocating new memory. State transition functions also perform returndata validation.
+// without allocating new memory. Functions perform returndata validation.
 //
 // All external calls that fail will revert internally. This is to simplify the API.
 type ERC721 is address;
@@ -43,15 +43,21 @@ using {
 // Procedures:
 //      01. right shifts interface id by 32 bits to pack with the selector
 //      02. store the packed supportsInterface selector and interface id in memory
-//      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
-//      04. assign returned value to output
+//      03. staticcall supportsInterface; cache as ok
+//      04. check that the return value is 32 bytes; compose with ok
+//      05. revert if ok is false
+//      06. assign the return value to output
 function supportsInterface(ERC721 erc721, bytes4 interfaceId) view returns (bool output) {
     assembly {
         interfaceId := shr(0x20, interfaceId)
 
         mstore(0x00, or(interfaceId, 0x01ffc9a700000000000000000000000000000000000000000000000000000000))
 
-        if iszero(staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
     }
@@ -63,15 +69,21 @@ function supportsInterface(ERC721 erc721, bytes4 interfaceId) view returns (bool
 // Procedures:
 //      01. store getApproved selector in memory
 //      02. store tokenId in memory
-//      03. staticcall getApproved, storing result at memory[0]; revert if it fails
-//      04. assign returned value to output
+//      03. staticcall getApproved; cache as ok
+//      04. check that the return value is 32 bytes; compose with ok
+//      05. revert if ok is false
+//      06. assign the return value to output
 function getApproved(ERC721 erc721, uint256 tokenId) view returns (address output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x081812fc00000000000000000000000000000000000000000000000000000000)
 
         mstore(0x04, tokenId)
 
-        if iszero(staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
     }
@@ -84,9 +96,11 @@ function getApproved(ERC721 erc721, uint256 tokenId) view returns (address outpu
 //      01. store isApprovedForAll selector in memory
 //      02. store owner in memory
 //      03. store operator in memory
-//      04. staticcall isApprovedForAll, storing result at memory[0]; revert if it fails
-//      05. assign returned value to output
-//      06. restore upper bits of the free memory pointer to zero
+//      04. staticcall isApprovedForAll; cache as ok
+//      05. check that the return value is 32 bytes; compose with ok
+//      06. revert if ok is false
+//      07. assign the return value to output
+//      08. restore the upper bits of the free memory pointer to zero
 function isApprovedForAll(ERC721 erc721, address owner, address operator) view returns (bool output) {
     assembly {
         mstore(0x00, 0xe985e9c500000000000000000000000000000000000000000000000000000000)
@@ -95,7 +109,11 @@ function isApprovedForAll(ERC721 erc721, address owner, address operator) view r
 
         mstore(0x24, operator)
 
-        if iszero(staticcall(gas(), erc721, 0x00, 0x44, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc721, 0x00, 0x44, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
 
@@ -109,15 +127,21 @@ function isApprovedForAll(ERC721 erc721, address owner, address operator) view r
 // Procedures:
 //      01. store balanceOf selector in memory
 //      02. store owner in memory
-//      03. staticcall balanceOf, storing result at memory[0]; revert if it fails
-//      04. assign returned value to output
+//      03. staticcall balanceOf; cache as ok
+//      04. check that the return value is 32 bytes; compose with ok
+//      05. revert if ok is false
+//      06. assign the return value to output
 function balanceOf(ERC721 erc721, address owner) view returns (uint256 output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x70a0823100000000000000000000000000000000000000000000000000000000)
 
         mstore(0x04, owner)
 
-        if iszero(staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
     }
@@ -129,15 +153,21 @@ function balanceOf(ERC721 erc721, address owner) view returns (uint256 output) {
 // Procedures:
 //      01. store ownerOf selector in memory
 //      02. store tokenId in memory
-//      03. staticcall ownerOf, storing result at memory[0]; revert if it fails
-//      04. assign returned value to output
+//      03. staticcall ownerOf; cache as ok
+//      04. check that the return value is 32 bytes; compose with ok
+//      05. revert if ok is false
+//      06. assign the return value to output
 function ownerOf(ERC721 erc721, uint256 tokenId) view returns (address output) {
     assembly ("memory-safe") {
         mstore(0x00, 0x6352211e00000000000000000000000000000000000000000000000000000000)
 
         mstore(0x04, tokenId)
 
-        if iszero(staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc721, 0x00, 0x24, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
     }

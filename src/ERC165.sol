@@ -4,7 +4,7 @@ pragma solidity ^0.8.25;
 // ## ERC165 Type Wrapper
 //
 // This type wraps the address primitive type and contains functions to call the core ERC165 interface
-// without allocating new memory. State transition functions also perform returndata validation.
+// without allocating new memory.
 //
 // All external calls that fail will revert internally. This is to simplify the API.
 type ERC165 is address;
@@ -35,15 +35,21 @@ using {
 // Procedures:
 //      01. right shifts interface id by 32 bits to pack with the selector
 //      02. store the packed supportsInterface selector and interface id in memory
-//      03. staticcall supportsInterface, storing result at memory[0]; revert if it fails
-//      04. assign returned value to output
+//      03. staticcall supportsInterface; cache as ok
+//      04. check that the return value is 32 bytes; compose with ok
+//      05. if ok is false, revert
+//      06. assign returned value to output
 function supportsInterface(ERC165 erc165, bytes4 interfaceId) view returns (bool output) {
     assembly {
         interfaceId := shr(0x20, interfaceId)
 
         mstore(0x00, or(interfaceId, 0x01ffc9a700000000000000000000000000000000000000000000000000000000))
 
-        if iszero(staticcall(gas(), erc165, 0x00, 0x24, 0x00, 0x20)) { revert(0x00, 0x00) }
+        let ok := staticcall(gas(), erc165, 0x00, 0x24, 0x00, 0x20)
+
+        ok := and(ok, eq(returndatasize(), 0x20))
+
+        if iszero(ok) { revert(0x00, 0x00) }
 
         output := mload(0x00)
     }
