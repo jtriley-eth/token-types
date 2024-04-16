@@ -65,7 +65,7 @@ contract Vault {
 - Each external call asserts:
   - The call succeeded.
   - The call returned the correct returndatasize.
-  - If the call returns a boolean:
+  - If a stateful call returns a boolean to indicate success:
     - The call returned `true`.
   - If the call is ERC20's `transfer`, `transferFrom`, or `approve`:
     - No data was returned OR (the returndata is 32 bytes AND is `true`).
