@@ -30,5 +30,3 @@ jobs:
       - name: Gas Snapshot
         run: |
           forge snapshot --isolate --check
-        env:
-          FOUNDRY_PROFILE: ci

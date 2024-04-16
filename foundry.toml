@@ -4,11 +4,8 @@ via_ir = true
 bytecode_hash = "none"
 
 [fuzz]
-runs = 256
+runs = 10_000
 
 [fmt]
 bracket_spacing = true
 multiline_func_header = "params_first"
-
-[profile.ci.fuzz]
-runs = 10_000
