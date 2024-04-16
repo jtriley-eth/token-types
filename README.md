@@ -1,5 +1,19 @@
 ## Token Types
 
+### TL;DR
+
+Token Types are drop-in replacements for interfaces.
+
+All the expected functions, all of the available operators, none of the memory allocation, and none of the bloat.
+
+```solidity
+// replace this:
+import { IERC20 } from "some-other-project/IERC20.sol";
+
+// with this:
+import { ERC20 } from "token-types/ERC20.sol";
+```
+
 ### Motivation
 
 Interfaces were a good abstraction for their time, but are outdated. Interface interactions allocate
