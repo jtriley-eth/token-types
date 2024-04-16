@@ -5,6 +5,7 @@ bytecode_hash = "none"
 
 [fuzz]
 runs = 10_000
+seed = 69_420
 
 [fmt]
 bracket_spacing = true
