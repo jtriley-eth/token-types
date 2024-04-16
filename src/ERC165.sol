@@ -40,7 +40,7 @@ using {
 //      05. if ok is false, revert
 //      06. assign returned value to output
 function supportsInterface(ERC165 erc165, bytes4 interfaceId) view returns (bool output) {
-    assembly {
+    assembly ("memory-safe") {
         interfaceId := shr(0x20, interfaceId)
 
         mstore(0x00, or(interfaceId, 0x01ffc9a700000000000000000000000000000000000000000000000000000000))
