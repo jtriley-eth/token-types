@@ -9,3 +9,6 @@ runs = 256
 [fmt]
 bracket_spacing = true
 multiline_func_header = "params_first"
+
+[profile.ci.fuzz]
+runs = 10_000

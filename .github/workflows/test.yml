@@ -1,16 +1,10 @@
 name: test
 
-on: workflow_dispatch
-
-env:
-  FOUNDRY_PROFILE: ci
+on: [push, pull_request]
 
 jobs:
   check:
-    strategy:
-      fail-fast: true
-
-    name: Foundry project
+    name: Token Types
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,13 +16,19 @@ jobs:
         with:
           version: nightly
 
-      - name: Run Forge build
+      - name: Compile
         run: |
           forge --version
-          forge build --sizes
+          forge build
         id: build
 
-      - name: Run Forge tests
+      - name: Test
         run: |
           forge test -vvv
         id: test
+
+      - name: Gas Snapshot
+        run: |
+          forge snapshot --isolate
+        env:
+          FOUNDRY_PROFILE: ci
