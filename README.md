@@ -60,6 +60,21 @@ contract Vault {
 }
 ```
 
+### Behavior
+
+- Each external call asserts:
+  - The call succeeded.
+  - The call returned the correct returndatasize.
+  - If the call returns a boolean:
+    - The call returned `true`.
+  - If the call is ERC20's `transfer`, `transferFrom`, or `approve`:
+    - No data was returned OR (the returndata is 32 bytes AND is `true`).
+- The operators `+`, `-`, `*`, `/`, and `%` revert if the operation:
+  - Overflows.
+  - Underflows.
+  - Divides by zero.
+- The operator `~` masks the address to `160` bits after performing bitwise `not`.
+
 ### Existing Types
 
 Documentation is prefixed to respective type and function definitions.
