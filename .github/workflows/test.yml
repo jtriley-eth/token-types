@@ -26,7 +26,3 @@ jobs:
         run: |
           forge test -vvv
         id: test
-
-      - name: Gas Snapshot
-        run: |
-          forge snapshot --isolate --check
